@@ -1,7 +1,7 @@
 % \LaTeX-Main\
 % !TeX encoding=UTF-8
 % !TeX spellcheck=en_US
-%% The LaTeX package csvsimple - version 2.6.1 (2024/05/16)
+%% The LaTeX package csvsimple - version 2.7.0 (2024/09/27)
 %% csvsimple.tex: Manual
 %%
 %% -------------------------------------------------------------------------------------------
@@ -1027,14 +1027,14 @@ see Section~\ref{subsec:tabsupport} from page~\pageref{subsec:tabsupport}.
 \clearpage
 \subsection{Header Processing and Column Name Assignment}%
 
-\begin{docCsvKey}{head}{\colOpt{=true\textbar false}}{default |true|, initially |true|}
-  If this key is set, the first line of the CSV file is treated as a header
+\begin{docCsvKey}[doc updated=2024-09-18]{head}{\colOpt{=true\textbar false}}{default |true|, initially |true|}
+  If this key is set, the first non-empty line of the CSV file is treated as a header
   line which can be used for column name assignments.
 \end{docCsvKey}
 
 
 \begin{docCsvKey}{no head}{}{no value}
-  Abbreviation for |head=false|, i.\,e. the first line of the CSV file is
+  Abbreviation for |head=false|, i.\,e. the first non-empty line of the CSV file is
   treated as data line.
   Note that this option cannot be used in combination with
   the |\csvauto...| commands like \refCom{csvautotabular}, etc.
@@ -1842,6 +1842,7 @@ completeness, but are unlikely to be used directly.
 \subsection{Special Characters}\label{subsec:specchar}
 Be default, the CSV content is treated like normal \LaTeX\ text, see
 Subsection~\ref{macrocodexample} on page~\pageref{macrocodexample}.
+For example, \%~can be used to start an in-line comment.
 But, \TeX\ special characters of the CSV content may also be interpreted
 as normal characters (|\catcode| 12, other), if one or more of the following options are used.
 

@@ -1,4 +1,4 @@
-%% The LaTeX package csvsimple - version 2.6.1 (2024/05/16)
+%% The LaTeX package csvsimple - version 2.7.0 (2024/09/27)
 %% csvsimple-l3.sty: Simple LaTeX CSV file processing (LaTeX3)
 %%
 %% -------------------------------------------------------------------------------------------
@@ -18,7 +18,7 @@
 %% This work consists of all files listed in README.md
 %%
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
-\ProvidesExplPackage{csvsimple-l3}{2024/05/16}{2.6.1}
+\ProvidesExplPackage{csvsimple-l3}{2024/09/27}{2.7.0}
   {LaTeX3 CSV file processing}
 
 
@@ -148,9 +148,6 @@
     Therefore,~the~macro~#2 is~not~defined.
   }
 
-\msg_new:nnn { csvsimple }{ empty-head }
-  { File~'#1'~starts~with~an~empty~line~(empty~head)!.}
-
 \msg_new:nnn { csvsimple }{ file-error }
   { File~'#1'~not~existent,~not~readable,~or~empty!}
 
@@ -167,6 +164,8 @@
   { Call~of~CSV-Sorter~failed! }
   { See~log~file~'\l__csvsim_csvsorter_log_str'. }
 
+\msg_new:nnn { csvsimple }{ data-missing }
+  { File~'#1'~does~not~contain~(accepted)~data~lines!~The~result~may~be~unpleasant.}
 
 
 %---- core loop processing
@@ -227,18 +226,18 @@
 
 \cs_new_protected_nopar:Npn \__csvsim_read_head:
   {
-    \__csvsim_read_line:
-    \tl_if_eq:NNTF \csvline \c__csvsim_par_tl
+    \bool_do_while:nn
       {
-        \msg_error:nne { csvsimple }{ empty-head }{ \g__csvsim_filename_str }
+        \bool_lazy_or_p:nn { \tl_if_eq_p:NN \csvline \c__csvsim_par_tl }{ \tl_if_blank_p:o \csvline }
       }
       {
-        \int_gzero:N \g_csvsim_columncount_int
-        \__csvsim_scan_line:
-        \bool_if:NT \g__csvsim_colnames_detection_bool
-          {
-            \int_step_function:nN \g_csvsim_columncount_int \__csvsim_process_head_name:n
-          }
+        \__csvsim_read_line:
+      }
+    \int_gzero:N \g_csvsim_columncount_int
+    \__csvsim_scan_line:
+    \bool_if:NT \g__csvsim_colnames_detection_bool
+      {
+        \int_step_function:nN \g_csvsim_columncount_int \__csvsim_process_head_name:n
       }
   }
 
@@ -395,10 +394,15 @@
       }
     \__csvsim_set_colnames:
     \seq_gclear:N \g__csvsim_colname_seq
-    \bool_if:NF \g__csvsim_line_firstline_bool
+    \bool_if:NT \g__csvsim_line_firstline_bool
       {
-        \g__csvsim_hook_late_after_last_line_tl
+        \msg_warning:nne { csvsimple }{ data-missing }{ \g__csvsim_filename_str }
+        \bool_if:NT \g__csvsim_head_bool
+          {
+            \g__csvsim_hook_late_after_head_tl
+          }
       }
+    \g__csvsim_hook_late_after_last_line_tl
     \g__csvsim_hook_table_end_tl
     \g__csvsim_hook_after_reading_tl
     \bool_if:NT \g__csvsim_collect_data_bool

@@ -17,6 +17,20 @@ and this project adheres to
 
 
 
+## [2.7.0] - 2024-09-27
+
+### Added
+- Warning, if the CSV file does not contain (accepted) data lines
+
+### Changed
+- Comment lines or empty line before header line are now supported (issue #41)
+- If there is no data line, `late after head` and `late after last line` are applied nonetheless 
+    (loosely connected to issue #41). Note: You should not use files without data!
+- Technical information: The package documentation is now produced with lualatex instead of pdflatex        
+- Technical information: The documentation loads `minted2`, if it exists, to avoid encoding errors and latexmk problems with minted v3
+
+
+
 ## [2.6.1] - 2024-05-16
 
 ### Changed
